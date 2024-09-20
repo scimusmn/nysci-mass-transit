@@ -38,8 +38,8 @@ cv::Mat captureCalibrationImage(cv::VideoCapture &camera, int num, int total) {
   while(true) {
     camera >> frame;
     cv::putText(
-      frame, buf, cv::Point(0, frame.size().height), 
-      cv::FONT_HERSHEY_SIMPLEX, 1, 0xff0000
+      frame, buf, cv::Point(10, frame.size().height - 10), 
+      cv::FONT_HERSHEY_PLAIN, 1, CV_RGB(255, 0, 0)
     );
     cv::imshow(CALIBRATION_WIN, frame);
     int key = cv::waitKey(10);

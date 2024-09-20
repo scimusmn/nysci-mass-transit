@@ -8,7 +8,7 @@ int getVideoDevice(cv::FileStorage& fs) {
   DeviceEnumerator e;
   auto deviceMap = e.getVideoDevicesMap();
   for (auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
-    printf("  %d. %s\n", it->first, it->second.deviceName);
+    printf("  %d. %s\n", it->first, it->second.deviceName.c_str());
   }
   printf("use device: ");
   fflush(stdout);
