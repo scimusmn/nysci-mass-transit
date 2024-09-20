@@ -118,7 +118,7 @@ void calibrateCamera(
   );
 
   // save calibration
-  fs << "calibration" << "{";
+  fs << NODE_CALIBRATION << "{";
   fs << "camera_matrix" << cameraMatrix;
   fs << "distortion_coefficients" << distCoeffs;
   fs << "}";
@@ -127,16 +127,9 @@ void calibrateCamera(
 
 
 // perform image calibration
-void calibrate(cv::FileStorage& fs, int cameraId) {
+void calibrate(cv::FileStorage& fs, cv::VideoCapture &camera) {
   int num = getImagesCount();
   printf("capturing %d images...\n", num);
-
-  // open camera
-  cv::VideoCapture camera(cameraId, cv::CAP_DSHOW);
-  if (!camera.isOpened()) {
-    fprintf(stderr, "FATAL: could not open camera!\n");
-    exit(1);
-  }
 
   // create window and calibrate
   cv::namedWindow(CALIBRATION_WIN, cv::WINDOW_AUTOSIZE);

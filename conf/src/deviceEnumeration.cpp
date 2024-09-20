@@ -21,9 +21,7 @@ int getVideoDevice(cv::FileStorage& fs) {
     }
   }
 
-  fs << "device" << "{";
-  fs << "number" << device;
-  fs << "}";
+  fs << NODE_VIDEO_DEVICE << device;
 
   return device;
 }

@@ -10,6 +10,7 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/deviceEnumeration.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/calibrate.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/thresholds.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/DeviceEnumerator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/cargs.c
   )
