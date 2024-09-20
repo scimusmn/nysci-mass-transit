@@ -1,29 +1,19 @@
-#include <stdio.h>
+#include "common.h"
 #include <cargs.h>
 #include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <DeviceEnumerator.h>
+#include <opencv2/imgproc.hpp>
+#include <stdio.h>
 
 
-#define DEFAULT_CONF_FILENAME "transit.conf"
-
+#define DEFAULT_CONF_FILENAME "config.xml"
 
 
 struct cag_option options[] = {
-  { .identifier = 'o',
-    .access_letters = "o",
-    .access_name = NULL,
-    .value_name = "OUTPUT FILENAME",
-    .description = "output config file (default " DEFAULT_CONF_FILENAME ")",
-  },
-  { .identifier = 'h',
-    .access_letters = "h",
-    .access_name = "help",
-    .value_name = NULL,
-    .description = "output config file (default " DEFAULT_CONF_FILENAME ")",
-  },
+  { 'o', "o", NULL, "OUTPUT FILENAME", "output config file (default " DEFAULT_CONF_FILENAME ")" },
+  { 'h', "h", "help", NULL, "display help message" },
 };
+
 
 
 int main(int argc, char **argv) {
@@ -37,7 +27,7 @@ int main(int argc, char **argv) {
         filename = cag_option_get_value(&context);
         break;
       case 'h':
-        printf("Usage: %s [OPTION]...\n", argv[0]);
+        printf("Usage: configure-vision [OPTION]...\n", argv[0]);
         printf("Generate a configuration file for mass transit vision\n");
         cag_option_print(options, CAG_ARRAY_SIZE(options), stdout);
         return 0;
@@ -48,5 +38,10 @@ int main(int argc, char **argv) {
   }
 
   printf("outputting to %s\n", filename);
+  cv::FileStorage fs(filename, cv::FileStorage::WRITE);
+
+  getVideoDevice(fs);
+  calibrate(fs, 0);
+
   return 0;
 }
