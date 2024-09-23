@@ -25,11 +25,17 @@ struct actions {
 };
 
 
+void separate() {
+  printf("\n================================\n\n");
+}
+
+
 
 int main(int argc, char **argv) {
   // parse command line options
   const char *filename = DEFAULT_CONF_FILENAME;
   struct actions action;
+  bool actionFlag = false;
   cag_option_context context;
   cag_option_init(&context, options, CAG_ARRAY_SIZE(options), argc, argv);
   while (cag_option_fetch(&context)) {
@@ -57,7 +63,8 @@ int main(int argc, char **argv) {
     }
   }
 
-  printf("outputting to %s\n", filename);
+  printf("\noutputting to %s\n", filename);
+  separate();
   cv::FileStorage fs;
   int device = -1;
   try {
@@ -82,17 +89,17 @@ int main(int argc, char **argv) {
   fs.open(filename, cv::FileStorage::APPEND);
 
   // create requested configurations
-  if (action.getVideoDevice) { device = getVideoDevice(fs); }
+  if (action.getVideoDevice) { device = getVideoDevice(fs); separate(); }
   cv::VideoCapture camera;
   if (action.calibrate || action.setThresholds) { camera.open(device, cv::CAP_DSHOW); }
   if (!camera.isOpened()) {
     fprintf(stderr, "FATAL: could not open camera!\n");
     return 1;
   }
-  if (action.calibrate) { calibrate(fs, camera); }
-  if (action.setThresholds) { setThresholds(fs, camera); }
+  if (action.calibrate) { calibrate(fs, camera); separate(); }
+  if (action.setThresholds) { setThresholds(fs, camera); separate(); }
 
-  printf("Configuration complete!\n");
-
+  fs.release();
+  printf("Configuration complete!\n\n");
   return 0;
 }
