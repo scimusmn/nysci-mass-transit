@@ -21,7 +21,13 @@ set(COMMON_INCLUDE
 add_executable(
   configure
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureVideoDevice.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureCalibration.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureColors.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureCircleParams.cpp
   ${COMMON_CPP}
 )
 target_include_directories(configure PUBLIC ${OpenCV_INCLUDE_DIRS} ${COMMON_INCLUDE})
 target_link_libraries(configure PUBLIC ${OpenCV_LIBS})
+
+configure_file("config.xml.example" "config.xml")
