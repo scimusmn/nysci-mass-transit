@@ -12,6 +12,7 @@ set(COMMON_CPP
   ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/cargs.c
   ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/DeviceEnumerator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/colors.cpp
 )
 set(COMMON_INCLUDE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -21,6 +22,7 @@ set(COMMON_INCLUDE
 add_executable(
   configure
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/common.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureVideoDevice.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureCalibration.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureColors.cpp

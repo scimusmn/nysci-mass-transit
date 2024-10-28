@@ -1,5 +1,5 @@
 #include <config.h>
-#include <conf.h>
+#include <conf_common.h>
 #include <cargs.h>
 #include <stdio.h>
 

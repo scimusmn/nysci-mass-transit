@@ -1,4 +1,4 @@
-#include <conf.h>
+#include <conf_common.h>
 #include <config.h>
 #include <DeviceEnumerator.h>
 #include <opencv2/core.hpp>
