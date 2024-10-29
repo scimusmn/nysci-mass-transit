@@ -87,6 +87,12 @@ int main(int argc, char **argv) {
   }
 
   cv::VideoCapture camera(config.deviceId, cv::CAP_DSHOW);
+  if (config.width > 0) {
+    camera.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH, config.width);
+  }
+  if (config.height > 0) {
+    camera.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT, config.height);
+  }
 
   if (actions.calibrate) {
     acted = true;

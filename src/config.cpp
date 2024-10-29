@@ -109,6 +109,12 @@ bool CircleDetection::load(cv::FileNode &n) {
 
 
 void Configuration::save(cv::FileStorage &fs) {
+  if (width > 0) {
+    fs << "width" << width;
+  }
+  if (height > 0) {
+     fs << "height" << height;
+  }
   fs << "deviceId" << deviceId;
   fs << "calibration"; calibration.serialize(fs);
   fs << "colors"; colors.serialize(fs);
@@ -116,6 +122,12 @@ void Configuration::save(cv::FileStorage &fs) {
   fs << "circleParams"; circleParams.serialize(fs);
 }
 bool Configuration::load(cv::FileNode &n) {
+  if (!unserialize(n, "width", width)) {
+    width = -1;
+  }
+  if (!unserialize(n, "height", height)) {
+    height = -1;
+  }
   return
     unserialize(n, "deviceId", deviceId) &&
     unserialize(n, "calibration", &calibration) &&

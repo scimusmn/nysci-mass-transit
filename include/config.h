@@ -49,6 +49,8 @@ struct CircleDetection : public Serializable {
 
 struct Configuration : public Serializable {
   int deviceId;
+  int width;
+  int height;
   Calibration calibration;
   Colors colors;
   cv::Mat projection;
