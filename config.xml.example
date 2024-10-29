@@ -17,13 +17,6 @@
       <data>
         0.26645037597881815 -0.95065664941140549 -0.014426257005734244
         -0.0028121259642627217 1.5651690148498996</data></distCoeffs></calibration>
-  <circleParams>
-    <cannyThreshold>-9.2559631349317831e+61</cannyThreshold>
-    <accumulatorThreshold>-9.2559631349317831e+61</accumulatorThreshold>
-    <minDist>-9.2559631349317831e+61</minDist>
-    <radius>
-      <start>0</start>
-      <end>255</end></radius></circleParams>
   <colors>
     <black>
       <h>
@@ -120,5 +113,20 @@
         <start>163</start>
         <end>219</end></v>
       <erosions>1</erosions>
-      <dilations>1</dilations></yellow></colors></config>
+      <dilations>1</dilations></yellow></colors>
+  <projection type_id="opencv-matrix">
+    <rows>3</rows>
+    <cols>3</cols>
+    <dt>d</dt>
+    <data>
+      1.3583369951723241 0.16256692761370897 -145.86588525019394
+      -0.06340812915814828 1.4221537539756108 -57.529289754771355
+      -2.4503414931870475e-05 0.00028826994625634521 1.</data></projection>
+  <circleParams>
+    <cannyThreshold>14</cannyThreshold>
+    <accumulatorThreshold>39</accumulatorThreshold>
+    <minDist>27</minDist>
+    <radius>
+      <start>39</start>
+      <end>47</end></radius></circleParams></config>
 </opencv_storage>

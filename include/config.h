@@ -39,7 +39,9 @@ struct Calibration : public Serializable {
 };
 
 struct CircleDetection : public Serializable {
-  double cannyThreshold, accumulatorThreshold, minDist;
+  int cannyThreshold = 100;
+  int accumulatorThreshold = 100;
+  int minDist = 100;
   Range radius;
   void save(cv::FileStorage &fs);
   bool load(cv::FileNode &node);
@@ -48,8 +50,9 @@ struct CircleDetection : public Serializable {
 struct Configuration : public Serializable {
   int deviceId;
   Calibration calibration;
-  CircleDetection circleParams;
   Colors colors;
+  cv::Mat projection;
+  CircleDetection circleParams;
   void save(cv::FileStorage &fs);
   bool load(cv::FileNode &node);
 };

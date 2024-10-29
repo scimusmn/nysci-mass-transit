@@ -12,6 +12,7 @@ struct cag_option options[] = {
   { 'd', "d", NULL, NULL, "pick the video device to use" },
   { 'c', "c", NULL, NULL, "calibrate the camera" },
   { 't', "t", NULL, NULL, "set color thresholds" },
+  { 'm', "m", NULL, NULL, "set the projection" },
   { 'p', "p", NULL, NULL, "set circle detection parameters" },
   { 'h', "h", "help", NULL, "display help message" },
 };
@@ -21,6 +22,7 @@ struct Actions {
   bool videoDevice = false;
   bool calibrate = false;
   bool colors = false;
+  bool project = false;
   bool circles = false;
 };
 
@@ -54,6 +56,9 @@ int main(int argc, char **argv) {
         break;
       case 'p':
         actions.circles = true;
+        break;
+      case 'm':
+        actions.project = true;
         break;
       case 'h':
         printf("Usage: configure [OPTION]...\n");
@@ -91,6 +96,11 @@ int main(int argc, char **argv) {
   if (actions.colors) {
     acted = true;
     configureColors(config, camera);
+    printSeparator();
+  }
+  if (actions.project) {
+    acted = true;
+    configureProjection(config, camera);
     printSeparator();
   }
   if (actions.circles) {

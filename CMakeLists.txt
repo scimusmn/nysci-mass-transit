@@ -27,6 +27,7 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureCalibration.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureColors.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureCircleParams.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/conf/configureProjection.cpp
   ${COMMON_CPP}
 )
 target_include_directories(configure PUBLIC ${OpenCV_INCLUDE_DIRS} ${COMMON_INCLUDE})
