@@ -132,5 +132,6 @@ void configureCalibration(Configuration &config, cv::VideoCapture &camera) {
   // create window and calibrate
   cv::namedWindow(CALIBRATION_WIN, cv::WINDOW_AUTOSIZE);
   calibrateCamera(config.calibration, camera, num, cv::Size(BOARD_WIDTH, BOARD_HEIGHT));
+  cv::destroyWindow(CALIBRATION_WIN);
   printf("calibration successful!\n");
 }

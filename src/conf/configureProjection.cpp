@@ -122,4 +122,5 @@ void configureProjection(Configuration &config, cv::VideoCapture &camera) {
 
   // get projection points
   config.projection = loop(camera, window, v);
+  cv::destroyWindow(window);
 }
