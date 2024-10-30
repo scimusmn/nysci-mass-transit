@@ -20,98 +20,134 @@
   <colors>
     <black>
       <h>
-        <start>99</start>
-        <end>132</end></h>
+        <start>103</start>
+        <end>117</end></h>
       <s>
-        <start>62</start>
-        <end>146</end></s>
+        <start>48</start>
+        <end>148</end></s>
       <v>
-        <start>2</start>
-        <end>76</end></v>
-      <erosions>3</erosions>
-      <dilations>4</dilations></black>
+        <start>0</start>
+        <end>118</end></v>
+      <erosions>1</erosions>
+      <dilations>1</dilations></black>
     <blue>
       <h>
-        <start>106</start>
-        <end>114</end></h>
+        <start>105</start>
+        <end>111</end></h>
       <s>
-        <start>170</start>
-        <end>246</end></s>
-      <v>
-        <start>137</start>
-        <end>177</end></v>
-      <erosions>8</erosions>
-      <dilations>7</dilations></blue>
-    <cyan>
-      <h>
-        <start>102</start>
-        <end>172</end></h>
-      <s>
-        <start>120</start>
-        <end>206</end></s>
-      <v>
-        <start>189</start>
-        <end>236</end></v>
-      <erosions>4</erosions>
-      <dilations>5</dilations></cyan>
-    <green>
-      <h>
-        <start>71</start>
-        <end>92</end></h>
-      <s>
-        <start>42</start>
-        <end>101</end></s>
-      <v>
-        <start>116</start>
-        <end>172</end></v>
-      <erosions>3</erosions>
-      <dilations>5</dilations></green>
-    <grey>
-      <h>
-        <start>102</start>
-        <end>120</end></h>
-      <s>
-        <start>38</start>
-        <end>64</end></s>
-      <v>
-        <start>199</start>
-        <end>238</end></v>
-      <erosions>16</erosions>
-      <dilations>15</dilations></grey>
-    <purple>
-      <h>
-        <start>147</start>
-        <end>163</end></h>
-      <s>
-        <start>97</start>
-        <end>206</end></s>
-      <v>
-        <start>99</start>
-        <end>151</end></v>
-      <erosions>2</erosions>
-      <dilations>3</dilations></purple>
-    <red>
-      <h>
-        <start>157</start>
-        <end>178</end></h>
-      <s>
-        <start>92</start>
+        <start>90</start>
         <end>255</end></s>
       <v>
-        <start>38</start>
-        <end>161</end></v>
+        <start>0</start>
+        <end>255</end></v>
       <erosions>4</erosions>
-      <dilations>9</dilations></red>
+      <dilations>3</dilations></blue>
+    <cyan>
+      <h>
+        <start>97</start>
+        <end>107</end></h>
+      <s>
+        <start>46</start>
+        <end>119</end></s>
+      <v>
+        <start>194</start>
+        <end>255</end></v>
+      <erosions>1</erosions>
+      <dilations>1</dilations></cyan>
+    <darkred>
+      <h>
+        <start>123</start>
+        <end>173</end></h>
+      <s>
+        <start>16</start>
+        <end>213</end></s>
+      <v>
+        <start>21</start>
+        <end>152</end></v>
+      <erosions>2</erosions>
+      <dilations>5</dilations></darkred>
+    <green>
+      <h>
+        <start>82</start>
+        <end>103</end></h>
+      <s>
+        <start>39</start>
+        <end>143</end></s>
+      <v>
+        <start>42</start>
+        <end>188</end></v>
+      <erosions>2</erosions>
+      <dilations>3</dilations></green>
+    <orange>
+      <h>
+        <start>7</start>
+        <end>18</end></h>
+      <s>
+        <start>40</start>
+        <end>250</end></s>
+      <v>
+        <start>45</start>
+        <end>218</end></v>
+      <erosions>3</erosions>
+      <dilations>3</dilations></orange>
+    <purple>
+      <h>
+        <start>110</start>
+        <end>125</end></h>
+      <s>
+        <start>51</start>
+        <end>144</end></s>
+      <v>
+        <start>63</start>
+        <end>255</end></v>
+      <erosions>1</erosions>
+      <dilations>1</dilations></purple>
+    <red>
+      <h>
+        <start>150</start>
+        <end>179</end></h>
+      <s>
+        <start>0</start>
+        <end>255</end></s>
+      <v>
+        <start>0</start>
+        <end>255</end></v>
+      <erosions>1</erosions>
+      <dilations>5</dilations></red>
+    <sage>
+      <h>
+        <start>70</start>
+        <end>101</end></h>
+      <s>
+        <start>17</start>
+        <end>40</end></s>
+      <v>
+        <start>99</start>
+        <end>193</end></v>
+      <erosions>1</erosions>
+      <dilations>1</dilations></sage>
+    <white>
+      <h>
+        <start>94</start>
+        <end>114</end></h>
+      <s>
+        <start>12</start>
+        <end>33</end></s>
+      <v>
+        <start>189</start>
+        <end>255</end></v>
+      <erosions>1</erosions>
+      <dilations>1</dilations></white>
     <yellow>
       <h>
-        <start>26</start>
-        <end>38</end></h>
+        <start>27</start>
+        <end>44</end></h>
       <s>
-        <start>31</start>
-        <end>111</end></s>
+        <start>22</start>
+        <end>119</end></s>
       <v>
         <start>163</start>
-        <end>219</end></v>
+        <end>255</end></v>
       <erosions>1</erosions>
       <dilations>1</dilations></yellow></colors>
   <projection type_id="opencv-matrix">
@@ -119,14 +155,14 @@
     <cols>3</cols>
     <dt>d</dt>
     <data>
-      1.3583369951723241 0.16256692761370897 -145.86588525019394
-      -0.06340812915814828 1.4221537539756108 -57.529289754771355
-      -2.4503414931870475e-05 0.00028826994625634521 1.</data></projection>
+      1.4022748879064602 0.098933504361498753 -149.23043768754241
+      0.050494595361693755 1.720422999109142 -161.6079524551013
+      2.1873838976128952e-05 0.0003941250246188225 1.</data></projection>
   <circleParams>
-    <cannyThreshold>14</cannyThreshold>
-    <accumulatorThreshold>39</accumulatorThreshold>
-    <minDist>27</minDist>
+    <cannyThreshold>22</cannyThreshold>
+    <accumulatorThreshold>15</accumulatorThreshold>
+    <minDist>9</minDist>
     <radius>
-      <start>39</start>
-      <end>47</end></radius></circleParams></config>
+      <start>11</start>
+      <end>19</end></radius></circleParams></config>
 </opencv_storage>

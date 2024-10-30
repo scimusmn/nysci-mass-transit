@@ -1,19 +1,11 @@
 #include <stdio.h>
 #include <config.h>
+#include <processing.h>
 #include <conf_common.h>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-
-
-void findCircles(std::vector<cv::Vec3f> &circles, cv::Mat &frame, CircleDetection params) {
-  cv::HoughCircles(
-    frame, circles, cv::HOUGH_GRADIENT,
-    1, params.minDist, params.cannyThreshold, params.accumulatorThreshold,
-    params.radius.start, params.radius.end
-  );
-}
 
 
 void drawCircles(std::vector<cv::Vec3f> &circles, cv::Mat &render) {

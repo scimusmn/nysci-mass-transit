@@ -152,3 +152,15 @@ bool load(Configuration &c, std::string filename) {
     return false;
   }
 }
+
+
+void openCamera(cv::VideoCapture &camera, Configuration &c) {
+  camera.open(c.deviceId, cv::CAP_DSHOW);
+  if (c.width > 0) {
+    camera.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH, c.width);
+  }
+  if (c.height > 0) {
+    camera.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT, c.height);
+  }
+
+}

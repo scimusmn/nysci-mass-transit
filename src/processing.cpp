@@ -33,3 +33,14 @@ void hsvMask(cv::Mat &frame, cv::Mat &mask, HsvRange hsv) {
   cv::erode(mask, mask, kernel, pt, hsv.erosions);
   cv::dilate(mask, mask, kernel, pt, hsv.dilations);
 }
+
+
+void findCircles(std::vector<cv::Vec3f> &circles, cv::Mat &frame, CircleDetection params) {
+  cv::HoughCircles(
+    frame, circles, cv::HOUGH_GRADIENT,
+    1, params.minDist, params.cannyThreshold, params.accumulatorThreshold,
+    params.radius.start, params.radius.end
+  );
+}
+
+

@@ -10,6 +10,9 @@
 #include <conf_common.h>
 
 
+#define CLAMP(x, val) x = x > val ? val : x;
+
+
 bool showColorConfig(
   cv::VideoCapture &camera, 
   std::pair<std::string, std::string> windows,
@@ -36,13 +39,15 @@ bool showColorConfig(
 
 
 void configureColor(cv::VideoCapture &camera, std::string name, HsvRange &hsv) {
+  CLAMP(hsv.h.start, 179);
+  CLAMP(hsv.h.end, 179);
   std::ostringstream camwin, maskwin, caption;
   camwin << "Camera: " << name;
   maskwin << "Mask: " << name;
   std::pair<std::string, std::string> windows(
     createWindow(camwin.str(), {
-      { "hStart", &(hsv.h.start), 255 },
-      { "hEnd", &(hsv.h.end), 255 },
+      { "hStart", &(hsv.h.start), 179},
+      { "hEnd", &(hsv.h.end), 179},
       { "sStart", &(hsv.s.start), 255 },
       { "sEnd", &(hsv.s.end), 255 },
       { "vStart", &(hsv.v.start), 255 },

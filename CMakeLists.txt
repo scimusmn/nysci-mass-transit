@@ -12,7 +12,7 @@ set(COMMON_CPP
   ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/cargs.c
   ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/DeviceEnumerator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/colors.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/processing.cpp
 )
 set(COMMON_INCLUDE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -32,5 +32,12 @@ add_executable(
 )
 target_include_directories(configure PUBLIC ${OpenCV_INCLUDE_DIRS} ${COMMON_INCLUDE})
 target_link_libraries(configure PUBLIC ${OpenCV_LIBS})
+add_executable(
+  mt-input
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/main/main.cpp
+  ${COMMON_CPP}
+)
+target_include_directories(mt-input PUBLIC ${OpenCV_INCLUDE_DIRS} ${COMMON_INCLUDE})
+target_link_libraries(mt-input PUBLIC ${OpenCV_LIBS})
 
 configure_file("config.xml.example" "config.xml")

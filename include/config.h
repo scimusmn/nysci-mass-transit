@@ -3,6 +3,7 @@
 #include <map>
 #include <opencv2/core/persistence.hpp>
 #include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
 
 
 struct Serializable {
@@ -62,3 +63,5 @@ struct Configuration : public Serializable {
 
 void save(Configuration c, std::string filename);
 bool load(Configuration &c, std::string filename);
+
+void openCamera(cv::VideoCapture &camera, Configuration &c);
