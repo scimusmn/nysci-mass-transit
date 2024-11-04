@@ -35,6 +35,7 @@ target_link_libraries(configure PUBLIC ${OpenCV_LIBS})
 add_executable(
   mt-input
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/main/color.cpp
   ${COMMON_CPP}
 )
 target_include_directories(mt-input PUBLIC ${OpenCV_INCLUDE_DIRS} ${COMMON_INCLUDE})
