@@ -9,8 +9,8 @@ find_package(OpenCV REQUIRED)
 
 # files shared across the configuration tool and main program
 set(COMMON_CPP
-  ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/cargs.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/DeviceEnumerator.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/cargs/cargs.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/DeviceEnumerator/DeviceEnumerator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/config.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/processing.cpp
 )
