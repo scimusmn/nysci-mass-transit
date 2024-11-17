@@ -36,7 +36,7 @@ struct ScorePoint {
 
 #define SCORE_UP 3
 #define SCORE_DOWN 1
-#define SCORE_MAX 100
+#define SCORE_MAX 20 
 #define SCORE_THRESH 10
 
 
@@ -53,8 +53,9 @@ void insertPoint(std::vector<ScorePoint> &points, ScorePoint p, double r) {
   for (auto it=points.begin(); it != points.end(); it++) {
     double d = dist2(*it, p);
     if (dist2(*it, p) < r2) {
-      if (it->score < SCORE_MAX) {
-        it->score += SCORE_UP;
+      it->score += SCORE_UP;
+      if (it->score > SCORE_MAX) {
+        it->score = SCORE_MAX;
       }
       match = true;
     }
@@ -106,7 +107,7 @@ void loop(
     double x = (*it)[0];
     double y = (*it)[1];
     double r = (*it)[2];
-    insertPoint(points[color], { x, y, 0 }, r/2);
+    insertPoint(points[color], { x, y, 0 }, r);
     // if (viz.main) {
     //   cv::circle(frame, cv::Point(x, y), r, CV_RGB(0, 255, 0));
     //   cv::putText(
