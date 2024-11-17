@@ -1,3 +1,6 @@
 [submodule "thirdparty/ntl"]
 	path = thirdparty/ntl
 	url = https://github.com/libntl/ntl
+[submodule "thirdparty/RUNEtag"]
+	path = thirdparty/RUNEtag
+	url = https://github.com/artursg/RUNEtag.git
