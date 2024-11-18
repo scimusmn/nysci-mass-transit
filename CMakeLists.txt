@@ -45,4 +45,12 @@ add_executable(dump-markers ${CMAKE_CURRENT_SOURCE_DIR}/src/dump-markers.cpp)
 target_include_directories(dump-markers PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(dump-markers PUBLIC ${OpenCV_LIBS})
 
+add_executable(
+  runegen
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/runegen.cpp
+  ${COMMON_CPP}
+)
+target_include_directories(runegen PUBLIC ${COMMON_INCLUDE})
+
+
 configure_file("config.xml.example" "config.xml")
