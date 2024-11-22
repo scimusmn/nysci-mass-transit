@@ -1,44 +1,24 @@
-# schema
+# memory layout
 
-The graph is represented as an adjacency list. It consists of an array of node objects, each of which contains the following:
-```
-{
-  "position": [x, y],
-  "lines": {
-    "red": [n1, n2, ...],
-    "blue": [n3, n4, ...],
-  }
-}
-```
-
-The "position" key contains an array of the normalized X and Y coordinates. The "lines" key contains an object whose keys are the names of various transit lines that the node belongs to and whose values are arrays of integer indices into the adjacency list.
-
-
-Example: this graph:
+The shared memory contains an array with 64 `tile` structs:
 
 ```
-[0, 1] ---- [ 1, 1 ]
-                |
-                |
-                |
-            [ 1, 0 ]
+struct tile {
+  uint16_t x;
+  uint16_t y;
+  uint8_t type;
+  uint8_t _padding;
+};
 ```
 
-where all nodes are on the "green" line, would be represented as
+The `x` and `y` struct members represent the normalized (x, y) coordinate of the tile using fixed point arithmetic. Divide each coordinate member by 65536 to obtain values in the range [0, 1).
 
-```
-[
-  {
-    "position": [0, 1],
-    "lines": { "green": [ 1 ] }
-  },
-  {
-    "position": [1, 1],
-    "lines": { "green": [ 0, 2 ] }
-  },
-  {
-    "position": [1, 0],
-    "lines": { "green": [ 1 ] }
-  }
-]
-```
+The `type` member indicates the type of the tile, and can take on the following values:
+
+  * 0 to 7: Subway
+  * 8 to 10: Ferry 
+  * 11: Passenger rail
+
+The `_padding` member is only present to clarify memory alignment.
+
+Memory access must be negotiated with a Windows mutex object, named "mass-transit-mutex".
