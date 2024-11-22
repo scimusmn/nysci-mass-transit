@@ -1,6 +1,6 @@
 # memory layout
 
-The shared memory contains an array with 64 `tile` structs:
+Data is communicated in a shared memory file named "Global\mass-transit-memory". The shared memory contains an array with 64 `tile` structs:
 
 ```
 struct tile {
