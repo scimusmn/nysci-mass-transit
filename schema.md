@@ -16,8 +16,16 @@ The `x` and `y` struct members represent the normalized (x, y) coordinate of the
 The `type` member indicates the type of the tile, and can take on the following values:
 
   * 0 to 7: Subway
-  * 8 to 10: Ferry 
-  * 11: Passenger rail
+    * 0: Blue Line (A, C, E)
+    * 1: Orange Line (B, D, F, M)
+    * 2: Light Green Line (G)
+    * 3: Brown Line (J, Z)
+    * 4: Yellow Line (N, Q, R)
+    * 5: Red Line (1, 2, 3)
+    * 6: Green Line (4, 5, 6)
+    * 7: Purple Line (7)
+  * 8: Ferry 
+  * 9: Passenger rail
 
 The `_padding` member is only present to clarify memory alignment.
 
