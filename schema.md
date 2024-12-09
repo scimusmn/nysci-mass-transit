@@ -1,13 +1,23 @@
 # memory layout
 
-Data is communicated in a shared memory file named "Global\mass-transit-memory". The shared memory contains an array with 64 `tile` structs:
+Data is communicated in a shared memory file named "Global\mass-transit-memory". The shared memory contains a struct like this:
+
+```
+struct {
+  struct tile tiles[64];
+  int count;
+};
+```
+
+The `count` member determines how many of the tile array elements are real data.
+
+The `tile` struct looks like this:
 
 ```
 struct tile {
   uint16_t x;
   uint16_t y;
-  uint8_t type;
-  uint8_t _padding;
+  uint16_t type;
 };
 ```
 
@@ -26,7 +36,5 @@ The `type` member indicates the type of the tile, and can take on the following 
     * 7: Purple Line (7)
   * 8: Ferry 
   * 9: Passenger rail
-
-The `_padding` member is only present to clarify memory alignment.
 
 Memory access must be negotiated with a Windows mutex object, named "mass-transit-mutex".
