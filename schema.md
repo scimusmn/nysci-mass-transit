@@ -1,40 +1,51 @@
-# memory layout
+# schema
 
-Data is communicated in a shared memory file named "Global\mass-transit-memory". The shared memory contains a struct like this:
-
-```
-struct {
-  struct tile tiles[64];
-  int count;
-};
-```
-
-The `count` member determines how many of the tile array elements are real data.
-
-The `tile` struct looks like this:
+Data is communicated as JSON. The most basic element is a tile object, represented as follows:
 
 ```
-struct tile {
-  uint16_t x;
-  uint16_t y;
-  uint16_t type;
-};
+{
+  x: NORMALIZED_X,
+  y: NORMALIZED_Y,
+  type: TYPE
+}
 ```
 
-The `x` and `y` struct members represent the normalized (x, y) coordinate of the tile using fixed point arithmetic. Divide each coordinate member by 65536 to obtain values in the range [0, 1).
+where the `x` and `y` elements are the (x, y) coordinates between [0, 1], and the `type` member is an integer that represents what kind of transit the tile is used for.
 
-The `type` member indicates the type of the tile, and can take on the following values:
+The full state of the map is communicated as an array of tile objects. The order of this array is not necessarily stable from one frame to the next.
 
-  * 0 to 7: Subway
-    * 0: Blue Line (A, C, E)
-    * 1: Orange Line (B, D, F, M)
-    * 2: Light Green Line (G)
-    * 3: Brown Line (J, Z)
-    * 4: Yellow Line (N, Q, R)
-    * 5: Red Line (1, 2, 3)
-    * 6: Green Line (4, 5, 6)
-    * 7: Purple Line (7)
-  * 8: Ferry 
-  * 9: Passenger rail
 
-Memory access must be negotiated with a Windows mutex object, named "mass-transit-mutex".
+Example: if the map were laid out as follows:
+
+```
++-------------------------------------------------+
+|                                                 |
+|                                                 |
+|     [0]                            [2]          |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                     [2]                         |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|     [2]                            [1]          |
+|                                                 |
+|                                                 |
+|                                                 |
++-------------------------------------------------+
+```
+
+then an appropriate representation might be
+
+```
+[
+  { x: 0.2, y: 0.2, type: 0 },
+  { x: 0.8, y: 0.2, type: 2 },
+  { x: 0.5, y: 0.5, type: 2 },
+  { x: 0.2, y: 0.8, type: 2 },
+  { x: 0.8, y: 0.8, type: 1 }
+]
+```
