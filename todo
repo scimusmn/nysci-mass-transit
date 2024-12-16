@@ -1,0 +1,17 @@
+ - write config file format
+ - write configurator
+   - camera selector
+   - camera calibrator
+   - table remapper
+   - circle detector
+   - dictionary coding
+   - config writer
+ - write server
+   - config reader
+   - tag detector
+   - schema server
+ - unity example
+   - schema client
+ - random server
+   - schema server
+
