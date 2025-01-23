@@ -2,12 +2,25 @@ import numpy as np
 import math
 import cv2 as cv
 import matplotlib.pyplot as pt
+import sys 
+
+
+
+
 
 WINDOW_TITLE = 'window'
 
-img = cv.imread('img.jpg')
+
+cam = cv.VideoCapture(2, cv.CAP_DSHOW)
+cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)
+cam.set(cv.CAP_PROP_FRAME_HEIGHT, 2160)
+
+ret, img = cam.read()
+cam.release()
 height, width = img.shape[0], img.shape[1]
-print(height, width)
+
+
+
 
 
 dictionary = {
@@ -74,6 +87,109 @@ def matchCode(x):
 
 
 
+def decode(hsv, p0, r, n=0):
+  tau = 2 * 3.141592
+  # hsv = cv.cvtColor(roi, cv.COLOR_BGR2HSV)
+  sampleAngles = [ x * tau / 43 for x in range(43) ]
+  samplePositions = list(map(lambda a : (round(r * math.cos(tau - a)), round(r * math.sin(tau - a))), sampleAngles))
+  sampleValues = list(map(lambda p : hsv[clamp(int(p0[1])+p[1], 0, hsv.shape[1]), clamp(int(p0[0])+p[0], 0, hsv.shape[0]), 2], samplePositions))
+  minVal = min(sampleValues)
+  maxVal = max(sampleValues)
+  m = (maxVal - minVal) / 2
+  m += minVal
+  binary = [ 1 if v > m else 0 for v in sampleValues ]
+  binStr = ''.join(str(b) for b in binary)
+  code = matchCode(int(binStr, 2))
+  if (code == -1 and n < 16):
+    # try again at a slightly smaller radius
+    return decode(hsv, p0, 0.99*r, n+1)
+  else:
+    return code
+    print(code, binStr, n)
+    pt.plot(np.array(sampleAngles), np.array(sampleValues))
+    pt.plot(np.array(sampleAngles), np.array([m] * len(sampleValues)))
+    pt.plot(np.array(sampleAngles), np.array([ 255 * b for b in binary ]))
+    pt.show()
+
+
+
+
+class HoughParams:
+  def __init__(self):
+    self.minDist = 20
+    self.cannyHigh = 100
+    self.threshold = 24
+    self.minRadius = 23
+    self.maxRadius = 33
+
+params = HoughParams()
+def findCircles(img, params, scale=2):
+  print('copying...')
+  dup = img[::scale, ::scale]
+  drawImg = dup.copy()
+  print('converting...')
+  grayImg = cv.cvtColor(dup, cv.COLOR_BGR2GRAY)
+  print('blurring...')
+  grayImg = cv.medianBlur(grayImg, 5)
+  print('detecting...')
+  circles = cv.HoughCircles(
+    grayImg, cv.HOUGH_GRADIENT, 1, 
+    params.minDist, param1=params.cannyHigh, param2=params.threshold, 
+    minRadius=params.minRadius, maxRadius=params.maxRadius)
+  circles = np.uint16(np.around(circles))
+  print('drawing...')
+  hsv = cv.cvtColor(dup, cv.COLOR_BGR2HSV)
+  for i in circles[0,:]:
+    cv.circle(drawImg, (i[0], i[1]), i[2], (0, 0, 255), 2)
+    code = decode(hsv, i, i[2])
+    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 4)
+    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+  cv.putText(drawImg, f"min dist: {params.minDist}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
+  cv.putText(drawImg, f"canny: {params.cannyHigh}", (10, 40), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
+  cv.putText(drawImg, f"threshold: {params.threshold}", (10, 50), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
+  cv.putText(drawImg, f"radius [min]: {params.minRadius}", (10, 60), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
+  cv.putText(drawImg, f"radius [max]: {params.maxRadius}", (10, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
+  print('showing...')
+  cv.imshow('detected circles', drawImg)
+  k = cv.waitKey(1)
+  if (k > 0):
+    k = chr(k)
+    match k:
+      case 'D':
+        params.minDist -= 1
+      case 'd':
+        params.minDist += 1
+      case 'C':
+        params.cannyHigh -= 1
+      case 'c':
+        params.cannyHigh += 1
+      case 'T':
+        params.threshold -= 1
+      case 't':
+        params.threshold += 1
+      case '{':
+        params.minRadius -= 1
+      case '[':
+        params.minRadius += 1
+      case '}':
+        params.maxRadius -= 1
+      case ']':
+        params.maxRadius += 1
+      case _:
+        return None
+    findCircles(img, params, scale)
+
+
+
+import timeit
+#print(timeit.timeit("findCircles(img)"), globals=locals())
+while True:
+  findCircles(img, params, 4)
+sys.exit(0)
+
+
+
+
 x = 1500
 def setX(v):
   global x
@@ -86,29 +202,6 @@ r = 500
 def setR(v):
   global r
   r = v
-
-def decode(roi, r, n=0):
-  tau = 2 * 3.141592
-  hsv = cv.cvtColor(roi, cv.COLOR_BGR2HSV)
-  sampleAngles = [ x * tau / 43 for x in range(43) ]
-  samplePositions = list(map(lambda a : (round(r * math.cos(tau - a)) + 256, round(r * math.sin(tau - a)) + 256), sampleAngles))
-  sampleValues = list(map(lambda p : hsv[p[1], p[0], 2], samplePositions))
-  minVal = min(sampleValues)
-  maxVal = max(sampleValues)
-  m = (maxVal - minVal) / 2
-  m += minVal
-  binary = [ 1 if v > m else 0 for v in sampleValues ]
-  binStr = ''.join(str(b) for b in binary)
-  code = matchCode(int(binStr, 2))
-  if (code == -1 and n < 16):
-    # try again at a slightly smaller radius
-    decode(roi, 0.99*r, n+1)
-  else:
-    print(code, binStr, n)
-    pt.plot(np.array(sampleAngles), np.array(sampleValues))
-    pt.plot(np.array(sampleAngles), np.array([m] * len(sampleValues)))
-    pt.plot(np.array(sampleAngles), np.array([ 255 * b for b in binary ]))
-    pt.show()
 
 
 def render():
@@ -148,8 +241,10 @@ def render():
   elif k == '>':
     r += 10
   elif k == ' ':
-    decode(roi, r)
+    decode(hsv, r)
     
 
-while 1:
-  render()
+if __name__ == '__main__':
+    import timeit
+    while 1:
+        print(timeit.timeit("render()", globals=locals()))
