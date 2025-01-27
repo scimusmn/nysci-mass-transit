@@ -3,6 +3,7 @@ import math
 import cv2 as cv
 import matplotlib.pyplot as pt
 import sys 
+import json
 
 
 
@@ -11,16 +12,47 @@ import sys
 WINDOW_TITLE = 'window'
 
 
-cam = cv.VideoCapture(2, cv.CAP_DSHOW)
-cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)
+cam = cv.VideoCapture(1, cv.CAP_DSHOW) 
+
+width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
+height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
+print("Camera resolution:", width, "x", height) 
+
+cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)             ############    TONY COMMENTED OUT
 cam.set(cv.CAP_PROP_FRAME_HEIGHT, 2160)
 
+width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
+height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
+print("Camera resolution:", width, "x", height) 
+
+
+
+
 ret, img = cam.read()
-cam.release()
 height, width = img.shape[0], img.shape[1]
 
 
 
+def loadProjectionConfig(filename="camConfig.json"):
+    try:
+        with open(filename, "r") as file:
+            config = json.load(file)
+        # Convert lists back to NumPy arrays
+        deserializedConfig = {
+            key: (np.array(value) if isinstance(value, list) else value)
+            for key, value in config.items()
+        }
+        print(f"Projection configuration loaded from {filename}.")
+        return deserializedConfig
+    except FileNotFoundError:
+        print(f"No projection configuration file found.")
+        return None
+
+
+projectionConfig = loadProjectionConfig();
+#print(projectionConfig)
+ 
+#img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))
 
 
 dictionary = {
@@ -92,7 +124,10 @@ def decode(hsv, p0, r, n=0):
   # hsv = cv.cvtColor(roi, cv.COLOR_BGR2HSV)
   sampleAngles = [ x * tau / 43 for x in range(43) ]
   samplePositions = list(map(lambda a : (round(r * math.cos(tau - a)), round(r * math.sin(tau - a))), sampleAngles))
-  sampleValues = list(map(lambda p : hsv[clamp(int(p0[1])+p[1], 0, hsv.shape[1]), clamp(int(p0[0])+p[0], 0, hsv.shape[0]), 2], samplePositions))
+  #sampleValues = list(map(lambda p : hsv[clamp(int(p0[1])+p[1], 0, hsv.shape[1]), clamp(int(p0[0])+p[0], 0, hsv.shape[0]), 2], samplePositions))  # Tony changed
+  sampleValues = list(map(lambda p : hsv[clamp(int(p0[1])+p[1], 0, hsv.shape[0] - 1 ), clamp(int(p0[0])+p[0], 0, hsv.shape[1] - 1), 2], samplePositions))
+
+
   minVal = min(sampleValues)
   maxVal = max(sampleValues)
   m = (maxVal - minVal) / 2
@@ -123,6 +158,7 @@ class HoughParams:
     self.maxRadius = 33
 
 params = HoughParams()
+
 def findCircles(img, params, scale=2):
   print('copying...')
   dup = img[::scale, ::scale]
@@ -136,6 +172,17 @@ def findCircles(img, params, scale=2):
     grayImg, cv.HOUGH_GRADIENT, 1, 
     params.minDist, param1=params.cannyHigh, param2=params.threshold, 
     minRadius=params.minRadius, maxRadius=params.maxRadius)
+
+    # Check if circles are detected
+  if circles is None:
+    print("No circles detected.")
+    #cv.imshow("Gray Image", grayImg)
+    #cv.waitKey(0)
+    return
+    
+
+
+
   circles = np.uint16(np.around(circles))
   print('drawing...')
   hsv = cv.cvtColor(dup, cv.COLOR_BGR2HSV)
@@ -184,7 +231,10 @@ def findCircles(img, params, scale=2):
 import timeit
 #print(timeit.timeit("findCircles(img)"), globals=locals())
 while True:
+  ret, img = cam.read()
+  img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))   ###### TONY ADDED
   findCircles(img, params, 4)
+cam.release()
 sys.exit(0)
 
 

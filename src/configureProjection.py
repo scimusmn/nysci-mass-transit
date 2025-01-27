@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import json
 
 MARK_RADIUS = 3
 MARK_COLOR = (0, 255, 0)
@@ -16,6 +17,7 @@ def mouseCb(event, x, y, flags, userdata):
 
 def getProjectionPoints(camera, window, points):
     ret, frame = camera.read()
+
     if not ret:
         return
 
@@ -41,6 +43,8 @@ def getProjectionPoints(camera, window, points):
 
 def previewProjection(camera, window, projection):
     ret, frame = camera.read()
+
+
     if not ret:
         return False
 
@@ -61,6 +65,8 @@ def loop(camera, window, points):
     w = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+    print("w = ", w, " h = ", h)
+
     expected = np.array([[0, 0], [w, 0], [0, h], [w, h]], dtype=np.float32)
     actual = np.array(points, dtype=np.float32)
 
@@ -77,7 +83,9 @@ def loop(camera, window, points):
 def configureProjection(config, camera): # perform image calibration
     points = []
     window = "Project surface"
-    cv2.namedWindow(window, cv2.WINDOW_AUTOSIZE)
+    #cv2.namedWindow(window, cv2.WINDOW_AUTOSIZE)         # TONY CHANGED
+    cv2.namedWindow(window, cv2.WINDOW_NORMAL)
+
     cv2.setMouseCallback(window, mouseCb, points)
 
     # Get projection points
@@ -89,7 +97,21 @@ class Configuration(dict):
 
 if __name__ == "__main__":
     config = Configuration()
-    camera = cv2.VideoCapture(0)  # Change the index if another camera is used
+
+    camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)    # Change the index if another camera is used
+     
+    width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    print("Camera resolution:", width, "x", height) 
+
+
+
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)             ############    TONY ADDED
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
+
+    width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    print("Camera resolution:", width, "x", height) 
 
     try:
         configureProjection(config, camera)
@@ -97,4 +119,15 @@ if __name__ == "__main__":
         camera.release()
         cv2.destroyAllWindows()
 
-    print("Projection Matrix:", config['projection'])
+    #print("Projection Matrix:", config['projection'])
+    print("Projection Matrix:", config)
+    
+    serializable_config = {
+        key: value.tolist() if isinstance(value, np.ndarray) else value
+        for key, value in config.items()
+        }
+
+    # Write parameters to  file
+    with open("camConfig.json", "w") as file:
+      json.dump(serializable_config, file, indent=4)
+
