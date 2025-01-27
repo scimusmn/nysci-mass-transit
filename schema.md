@@ -1,44 +1,51 @@
 # schema
 
-The graph is represented as an adjacency list. It consists of an array of node objects, each of which contains the following:
+Data is communicated as JSON. The most basic element is a tile object, represented as follows:
+
 ```
 {
-  "position": [x, y],
-  "lines": {
-    "red": [n1, n2, ...],
-    "blue": [n3, n4, ...],
-  }
+  x: NORMALIZED_X,
+  y: NORMALIZED_Y,
+  type: TYPE
 }
 ```
 
-The "position" key contains an array of the normalized X and Y coordinates. The "lines" key contains an object whose keys are the names of various transit lines that the node belongs to and whose values are arrays of integer indices into the adjacency list.
+where the `x` and `y` elements are the (x, y) coordinates between [0, 1], and the `type` member is an integer that represents what kind of transit the tile is used for.
+
+The full state of the map is communicated as an array of tile objects. The order of this array is not necessarily stable from one frame to the next.
 
 
-Example: this graph:
+Example: if the map were laid out as follows:
 
 ```
-[0, 1] ---- [ 1, 1 ]
-                |
-                |
-                |
-            [ 1, 0 ]
++-------------------------------------------------+
+|                                                 |
+|                                                 |
+|     [0]                            [2]          |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                     [2]                         |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|     [2]                            [1]          |
+|                                                 |
+|                                                 |
+|                                                 |
++-------------------------------------------------+
 ```
 
-where all nodes are on the "green" line, would be represented as
+then an appropriate representation might be
 
 ```
 [
-  {
-    "position": [0, 1],
-    "lines": { "green": [ 1 ] }
-  },
-  {
-    "position": [1, 1],
-    "lines": { "green": [ 0, 2 ] }
-  },
-  {
-    "position": [1, 0],
-    "lines": { "green": [ 1 ] }
-  }
+  { x: 0.2, y: 0.2, type: 0 },
+  { x: 0.8, y: 0.2, type: 2 },
+  { x: 0.5, y: 0.5, type: 2 },
+  { x: 0.2, y: 0.8, type: 2 },
+  { x: 0.8, y: 0.8, type: 1 }
 ]
 ```

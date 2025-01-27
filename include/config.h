@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
-#include <opencv2/core/persistence.hpp>
+// #include <opencv2/core/persistence.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
