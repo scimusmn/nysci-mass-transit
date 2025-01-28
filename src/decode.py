@@ -117,7 +117,7 @@ def matchCode(x):
     #print(f"Checking code: {code}, Distance: {dist}, Threshold: 8")
     #if (minimumDistance(x, dictionary[code]) < 8):
     if dist < 8:
-      print("MATCHED!")
+      print("MATCHED! ", code )
       return code
   #print("NO MATCH!")
   return -1
@@ -151,7 +151,8 @@ def decode(hsv, p0, r, n=0):
     pt.plot(np.array(sampleAngles), np.array([ 255 * b for b in binary ]))
     pt.show()
 '''
-def decode(hsv, p0, r, n=0, max_retries=16):
+
+def decode(hsv, p0, r, n=0, max_retries=16):     # was 16
     """
     Decode a binary code from the circular region of an HSV image.
 
@@ -183,8 +184,6 @@ def decode(hsv, p0, r, n=0, max_retries=16):
     sample_values = []
     for pos in sample_positions:
 
-        #print(f"Sample position before clamping: ({p0[0] + pos[0]}, {p0[1] + pos[1]})")
-
         # Safely cast to int before performing calculations
         raw_x = int(p0[0]) + int(pos[0])
         raw_y = int(p0[1]) + int(pos[1])
@@ -198,7 +197,9 @@ def decode(hsv, p0, r, n=0, max_retries=16):
 
     # Determine threshold and binarize values
     min_val, max_val = min(sample_values), max(sample_values)
-    threshold = (max_val + min_val) / 2
+    #threshold = (max_val + min_val) / 2     #################### OVERFLOW 
+    threshold = (float(max_val) + float(min_val)) / 2
+
     binary = [1 if v > threshold else 0 for v in sample_values]
 
     # Convert binary array to integer code
@@ -212,18 +213,18 @@ def decode(hsv, p0, r, n=0, max_retries=16):
     if code == -1 and n < max_retries:
         return decode(hsv, p0, r * 0.99, n + 1, max_retries)
 
-    # Optional: Debugging visualization
-    if n == 0:  # Only plot for the initial attempt
-        pt.figure(figsize=(10, 6))
-        pt.plot(sample_angles, sample_values, label="Sample Values")
-        pt.axhline(y=threshold, color='r', linestyle='--', label="Threshold")
-        pt.scatter(sample_angles, [255 * b for b in binary], color='g', label="Binary")
-        pt.legend()
-        pt.title("Decoding Visualization")
-        pt.xlabel("Angle (radians)")
-        pt.ylabel("Brightness (V channel)")
-        pt.show()
-
+  
+    """
+    pt.figure(figsize=(10, 6))
+    pt.plot(sample_angles, sample_values, label="Sample Values")
+    pt.axhline(y=threshold, color='r', linestyle='--', label="Threshold")
+    pt.scatter(sample_angles, [255 * b for b in binary], color='g', label="Binary")
+    pt.legend()
+    pt.title("Decoding Visualization")
+    pt.xlabel("Angle (radians)")
+    pt.ylabel("Brightness (V channel)")
+    pt.show()
+    """
     return code
 
 
@@ -240,19 +241,26 @@ class HoughParams:
 params = HoughParams()
 
 def findCircles(img, params, scale=2):
-  print('copying...')
+  #print('copying...')
   dup = img[::scale, ::scale]
   drawImg = dup.copy()
-  print('converting...')
+  #print('converting...')
   grayImg = cv.cvtColor(dup, cv.COLOR_BGR2GRAY)
-  print('blurring...')
+  #print('blurring...')
   grayImg = cv.medianBlur(grayImg, 5)      # Try without this
-  print('detecting...')
+  #print('detecting...')
+
+  '''
   circles = cv.HoughCircles(
     grayImg, cv.HOUGH_GRADIENT, 1, 
     params.minDist, param1=params.cannyHigh, param2=params.threshold, 
     minRadius=params.minRadius, maxRadius=params.maxRadius)
-
+  ''' 
+  circles = cv.HoughCircles(       # trying different parameters    variation of HOUGH_GRADIENT to get better accuracy
+    grayImg, cv.HOUGH_GRADIENT_ALT, 1, 
+    params.minDist, param1=params.cannyHigh, param2=0.5, 
+    minRadius=params.minRadius, maxRadius=params.maxRadius)
+   
     # Check if circles are detected
   if circles is None:
     print("No circles detected.")
@@ -264,7 +272,7 @@ def findCircles(img, params, scale=2):
 
 
   circles = np.uint16(np.around(circles))
-  print('drawing...')
+  #print('drawing...')
   hsv = cv.cvtColor(dup, cv.COLOR_BGR2HSV)
   for i in circles[0,:]:
     cv.circle(drawImg, (i[0], i[1]), i[2], (0, 0, 255), 2)
@@ -276,7 +284,7 @@ def findCircles(img, params, scale=2):
   cv.putText(drawImg, f"threshold: {params.threshold}", (10, 50), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
   cv.putText(drawImg, f"radius [min]: {params.minRadius}", (10, 60), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
   cv.putText(drawImg, f"radius [max]: {params.maxRadius}", (10, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  print('showing...')
+  #print('showing...')
   cv.imshow('detected circles', drawImg)
   k = cv.waitKey(1)
   if (k > 0):
@@ -314,9 +322,12 @@ while True:
   ret, img = cam.read()
   img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))   ###### TONY ADDED
   findCircles(img, params, 4)
+  #findCircles(img, params, 2)   #tony 
+
+
+
 cam.release()
 sys.exit(0)
-
 
 
 
