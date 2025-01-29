@@ -56,22 +56,22 @@ projectionConfig = loadProjectionConfig();
 
 
 dictionary = {
-  0:   0b1100111010111000101100011010001001110001001,
-  1:   0b1000101011111000110001111000000110001011001,
-  2:   0b1111101111111111011001010101001010010010101,
-  3:   0b0011100001000111101100101100010000100111101,
-  4:   0b1001100001100110000111001111011011100011110,
-  5:   0b1101100110000000110010011011100101111010111,
-  6:   0b0101111100100101000011101010010000101001000,
-  7:   0b0100000101110100010010010010100110110001011,
-  8:   0b0001101110000100000100010010001010011011000,
-  9:   0b1001101011000101110011010001011110110010001,
-  10:  0b0010111000010110000100111010100000110110101,
-  11:  0b1101111010110101100110100011111010111110000,
-  12:  0b0111011011100000110101110010101111111101010,
-  13:  0b0010010000000111001110110001001000011101100,
-  14:  0b1101010100001101000101000111011011001111111,
-  15:  0b1101101111101110001110111101111111011000100,
+  0:   0b11001110101110001011,
+  1:   0b10001010111110001100,
+  #2:   0b11111011111111110110,
+  3:   0b00111000010001111011,
+  4:   0b10011000011001100001,
+  5:   0b11011001100000001100,
+  6:   0b01011111001001010000,
+  7:   0b01000001011101000100,
+  8:   0b00011011100001000001,
+  9:   0b10011010110001011100,
+  10:  0b00101110000101100001,
+  11:  0b11011110101101011001,
+  12:  0b01110110111000001101,
+  13:  0b00100100000001110011,
+  14:  0b11010101000011010001,
+  15:  0b11011011111011100011,
 }
 
 
@@ -92,21 +92,21 @@ def median(l):
     return 0.5 * (l[middle - 1] + l[middle])
 
 def bitRotate(x):
-  msb = x & (1 << 42)
-  mask = (1 << 43) - 1
+  msb = x & (1 << 19)
+  mask = (1 << 20) - 1
   shift = (x << 1) & mask
   return shift | (0 if msb == 0 else 1)
 
 def bitCount(x):
   count = 0
-  for i in range(43):
+  for i in range(20):
     if ((x >> i) & 1 == 0):
       count += 1
   return count
 
 def minimumDistance(x, y):
   distance = bitCount(x ^ y)
-  for i in range(42):
+  for i in range(19):
     x = bitRotate(x)
     distance = min(distance, bitCount(x ^ y))
   return distance
@@ -116,8 +116,8 @@ def matchCode(x):
     dist = minimumDistance(x, dictionary[code])
     #print(f"Checking code: {code}, Distance: {dist}, Threshold: 8")
     #if (minimumDistance(x, dictionary[code]) < 8):
-    if dist < 8:
-    #if dist < 3:                        ############ TONY CHANGED
+    #if dist < 8:
+    if dist < 2:
       print("MATCHED! ", code )
       return code
   #print("NO MATCH!")
@@ -169,7 +169,7 @@ def decode(hsv, p0, r, n=0, max_retries=64):     # was 16
     """
 
     tau = 2 * math.pi
-    sample_count = 43  # Number of samples around the circle
+    sample_count = 20  # Number of samples around the circle
     sample_angles = [x * tau / sample_count for x in range(sample_count)]
 
     # Calculate sample positions based on angles
