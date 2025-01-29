@@ -116,8 +116,8 @@ def matchCode(x):
     dist = minimumDistance(x, dictionary[code])
     #print(f"Checking code: {code}, Distance: {dist}, Threshold: 8")
     #if (minimumDistance(x, dictionary[code]) < 8):
-    if dist < 8:
-    #if dist < 3:                        ############ TONY CHANGED
+    #if dist < 8:
+    if dist < 8:                        ############ TONY CHANGED
       print("MATCHED! ", code )
       return code
   #print("NO MATCH!")
@@ -241,6 +241,7 @@ class HoughParams:
 
 params = HoughParams()
 
+#def findCircles(img, params, scale=2):
 def findCircles(img, params, scale=2):
   #print('copying...')
   dup = img[::scale, ::scale]
@@ -251,7 +252,7 @@ def findCircles(img, params, scale=2):
   grayImg = cv.medianBlur(grayImg, 5)      # Try without this
   #print('detecting...')
 
-  
+
   circles = cv.HoughCircles(
     grayImg, cv.HOUGH_GRADIENT, 1, 
     params.minDist, param1=params.cannyHigh, param2=params.threshold, 
@@ -261,7 +262,7 @@ def findCircles(img, params, scale=2):
     grayImg, cv.HOUGH_GRADIENT_ALT, 1, 
     params.minDist, param1=params.cannyHigh, param2=0.5, 
     minRadius=params.minRadius, maxRadius=params.maxRadius)
-  ''' 
+   '''
     # Check if circles are detected
   if circles is None:
     print("No circles detected.")
