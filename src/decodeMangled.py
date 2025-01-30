@@ -12,27 +12,27 @@ import json
 WINDOW_TITLE = 'window'
 
 
-cam = cv.VideoCapture(1, cv.CAP_DSHOW)           # Change index for correct camera
+#cam = cv.VideoCapture(1, cv.CAP_DSHOW)           # Change index for correct camera
 
-width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
-height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
-print("Camera resolution:", width, "x", height) 
+#width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
+#height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
+#print("Camera resolution:", width, "x", height) 
 
-cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)           
-cam.set(cv.CAP_PROP_FRAME_HEIGHT, 2160)
+#cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)           
+#cam.set(cv.CAP_PROP_FRAME_HEIGHT, 2160)
 
-width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
-height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
-print("Camera resolution:", width, "x", height) 
+#width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
+#height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
+#print("Camera resolution:", width, "x", height) 
+
+img = cv.imread("RunesBig.png")
 
 
-
-
-ret, img = cam.read()
+#ret, img = cam.read()
 height, width = img.shape[0], img.shape[1]
 
 
-
+'''
 def loadProjectionConfig(filename="camConfig.json"):
     try:
         with open(filename, "r") as file:
@@ -53,7 +53,7 @@ projectionConfig = loadProjectionConfig();
 #print(projectionConfig)
  
 #img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))
-
+   '''
 
 dictionary = {
   0:   0b1100111010111000101100011010001001110001001,
@@ -117,7 +117,7 @@ def matchCode(x):
     #print(f"Checking code: {code}, Distance: {dist}, Threshold: 8")
     #if (minimumDistance(x, dictionary[code]) < 8):
     #if dist < 8:
-    if dist < 4:                        ############ TONY CHANGED
+    if dist < 8:                        ############ TONY CHANGED
       print("MATCHED! ", code )
       return code
   #print("NO MATCH!")
@@ -206,7 +206,7 @@ def decode(hsv, p0, r, n=0, max_retries=16):     # was 16
     #print("threshold: ", threshold);                  # Thresholds are legit       
     #       
     binary = [1 if v > threshold else 0 for v in sample_values]
-    
+    print(binary)
     # Convert binary array to integer code
     binary_str = ''.join(map(str, binary))
     try:
@@ -217,7 +217,9 @@ def decode(hsv, p0, r, n=0, max_retries=16):     # was 16
     # Retry if decoding fails and retries are available
     if code == -1 and n < max_retries:
         return decode(hsv, p0, r * 0.99, n + 1, max_retries)
-       
+    
+    
+
     ''' 
     if code != -1:
         pt.figure(figsize=(10, 6))
@@ -241,7 +243,7 @@ class HoughParams:
     self.cannyHigh = 100
     self.threshold = 13
     #self.minRadius = 13
-    self.minRadius = 60
+    self.minRadius = 56
     #self.maxRadius = 28
     self.maxRadius = 90
 
@@ -288,8 +290,8 @@ def findCircles(img, params, scale=2):
     code = decode(hsv, i, i[2])
     #code = decode(grayImg, i, i[2])       ########### TONY TRIED GRAYSCALE INSTEAD
 
-    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 4)
-    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+  cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 4)
+  cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
   cv.putText(drawImg, f"min dist: {params.minDist}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
   cv.putText(drawImg, f"canny: {params.cannyHigh}", (10, 40), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
   cv.putText(drawImg, f"threshold: {params.threshold}", (10, 50), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
@@ -330,8 +332,9 @@ def findCircles(img, params, scale=2):
 import timeit
 #print(timeit.timeit("findCircles(img)"), globals=locals())
 while True:
-  ret, img = cam.read()
-  img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))   ###### TONY ADDED
+  #ret, img = cam.read()
+
+  #img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))   ###### TONY ADDED
   findCircles(img, params, 4)
   #findCircles(img, params, 2)   #tony 
 
