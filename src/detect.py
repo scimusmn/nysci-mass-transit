@@ -6,7 +6,7 @@ DEBUG = True
 
 config = TransitConfiguration()
 config.load('config.json')
-# config.communication.connect(5)
+config.communication.connect(5)
 
 
 camera = config.openCamera()
@@ -28,7 +28,7 @@ while True:
         cv.putText(img, str(code), (x, y), cv.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
         if code != -1:
             tokens.append((x/width, y/height, code))
-    # config.sendTokens(tokens)
+    config.sendTokens(tokens)
     cv.imshow(window, img)
     cv.waitKey(10)
 
