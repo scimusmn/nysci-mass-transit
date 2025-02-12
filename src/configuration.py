@@ -9,8 +9,8 @@ class HoughCircleParams:
     self.minDist = 100
     self.param1 = 100
     self.param2 = 100
-    self.minRadius = 0
-    self.maxRadius = 0
+    self.minRadius = 20
+    self.maxRadius = 50
 
   def findCircles(self, img):
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -18,10 +18,14 @@ class HoughCircleParams:
     circles = cv.HoughCircles(
       gray, cv.HOUGH_GRADIENT, 
       self.dp, self.minDist,
-      self.param1, self.param2, self.minRadius, self.maxRadius
+      param1=self.param1, param2=self.param2, 
+      minRadius=self.minRadius, maxRadius=self.maxRadius
     )
-    circles = np.uint16(circles)
-    return circles
+    if circles is not None:
+      circles = np.uint16(circles)
+      return circles
+    else:
+      return np.zeros((1, 0), dtype=np.uint16)
 
 
   def toDict(self):
@@ -55,6 +59,14 @@ class TransitConfiguration:
     self.dpi = 20
     self.projection = np.eye(3, 3)
     self.circleParams = HoughCircleParams()
+
+  def reproject(self, img):
+    W = self.physicalWidth * self.dpi
+    H = self.physicalHeight * self.dpi
+    return cv.warpPerspective(img, self.projection, (W, H))
+
+  def findCircles(self, img):
+    return self.circleParams.findCircles(img)
 
   def load(self, filename):
     with open(filename) as file:

@@ -1,58 +1,7 @@
 import numpy as np
 import math
 import cv2 as cv
-import matplotlib.pyplot as pt
-import sys 
-import json
 
-
-
-
-
-WINDOW_TITLE = 'window'
-
-
-cam = cv.VideoCapture(1, cv.CAP_DSHOW)           # Change index for correct camera
-
-width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
-height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
-print("Camera resolution:", width, "x", height) 
-
-cam.set(cv.CAP_PROP_FRAME_WIDTH, 3840)           
-cam.set(cv.CAP_PROP_FRAME_HEIGHT, 2160)
-
-width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
-height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
-print("Camera resolution:", width, "x", height) 
-
-
-
-
-ret, img = cam.read()
-height, width = img.shape[0], img.shape[1]
-
-
-
-def loadProjectionConfig(filename="camConfig.json"):
-    try:
-        with open(filename, "r") as file:
-            config = json.load(file)
-        # Convert lists back to NumPy arrays
-        deserializedConfig = {
-            key: (np.array(value) if isinstance(value, list) else value)
-            for key, value in config.items()
-        }
-        print(f"Projection configuration loaded from {filename}.")
-        return deserializedConfig
-    except FileNotFoundError:
-        print(f"No projection configuration file found.")
-        return None
-
-
-projectionConfig = loadProjectionConfig();
-#print(projectionConfig)
- 
-#img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))
 
 
 dictionary = {
@@ -73,6 +22,12 @@ dictionary = {
   14:  0b1101010100001101000101000111011011001111111,
   15:  0b1101101111101110001110111101111111011000100,
 }
+
+
+# invert bits
+for key in dictionary:
+  dictionary[k] = 0b1111111111111111111111111111111111111111111 ^ dictionary[k]
+  print(bin(dictionary[k]))
 
 
 def clamp(x, lo, hi):
@@ -167,7 +122,7 @@ def decode(hsv, p0, r, n=0, max_retries=32):
     #threshold = 128                                      ############################### gotta try   
     binary = [1 if v > threshold else 0 for v in sample_values]
 
-    binary = [1 - b for b in binary]                   ########################  flip all bits
+    # binary = [1 - b for b in binary]                   ########################  flip all bits
     
     #binary_str = ''.join(map(str, binary))
     binary_str = ''.join(map(str, binary[::-1]))   ##########################  REVERSED  
@@ -190,171 +145,3 @@ def decode(hsv, p0, r, n=0, max_retries=32):
         return decode(hsv, p0, r * 0.99, n + 1, max_retries)
 
     return code
-   
-
-
-class HoughParams:
-  def __init__(self):
-    self.minDist = 27
-    self.cannyHigh = 100
-    self.threshold = 13
-    self.minRadius = 13
-    #self.minRadius = 60
-    self.maxRadius = 28
-    #self.maxRadius = 90
-
-
-params = HoughParams()
-
-#def findCircles(img, params, scale=2):
-def findCircles(img, params, scale=2):
-  #print('copying...')
-  dup = img[::scale, ::scale]
-  drawImg = dup.copy()
-  #print('converting...')
-  grayImg = cv.cvtColor(dup, cv.COLOR_BGR2GRAY)
-  #print('blurring...')
-  grayImg = cv.medianBlur(grayImg, 5)      # Try without this
-  #print('detecting...')
-
-
-  circles = cv.HoughCircles(
-    grayImg, cv.HOUGH_GRADIENT, 1, 
-    params.minDist, param1=params.cannyHigh, param2=params.threshold, 
-    minRadius=params.minRadius, maxRadius=params.maxRadius)
-  ''' 
-  circles = cv.HoughCircles(       # trying different parameters    variation of HOUGH_GRADIENT to get better accuracy
-    grayImg, cv.HOUGH_GRADIENT_ALT, 1, 
-    params.minDist, param1=params.cannyHigh, param2=0.5, 
-    minRadius=params.minRadius, maxRadius=params.maxRadius)
-   '''
-    # Check if circles are detected
-  if circles is None:
-    #print("No circles detected.")
-    #cv.imshow("Gray Image", grayImg)
-    #cv.waitKey(0)
-    return
-    
-
-
-
-  circles = np.uint16(np.around(circles))
-  #print('drawing...')
-  hsv = cv.cvtColor(dup, cv.COLOR_BGR2HSV)
-  for i in circles[0,:]:
-    cv.circle(drawImg, (i[0], i[1]), i[2], (0, 0, 255), 2)
-    code = decode(hsv, i, i[2])
-    #code = decode(grayImg, i, i[2])       ########### TONY TRIED GRAYSCALE INSTEAD
-
-    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 4)
-    cv.putText(drawImg, f"{code}", (i[0], i[1]), cv.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
-  cv.putText(drawImg, f"min dist: {params.minDist}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  cv.putText(drawImg, f"canny: {params.cannyHigh}", (10, 40), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  cv.putText(drawImg, f"threshold: {params.threshold}", (10, 50), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  cv.putText(drawImg, f"radius [min]: {params.minRadius}", (10, 60), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  cv.putText(drawImg, f"radius [max]: {params.maxRadius}", (10, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))
-  #print('showing...')
-  cv.imshow('detected circles', drawImg)
-  k = cv.waitKey(1)
-  if (k > 0):
-    k = chr(k)
-    match k:
-      case 'D':
-        params.minDist -= 1
-      case 'd':
-        params.minDist += 1
-      case 'C':
-        params.cannyHigh -= 1
-      case 'c':
-        params.cannyHigh += 1
-      case 'T':
-        params.threshold -= 1
-      case 't':
-        params.threshold += 1
-      case '{':
-        params.minRadius -= 1
-      case '[':
-        params.minRadius += 1
-      case '}':
-        params.maxRadius -= 1
-      case ']':
-        params.maxRadius += 1
-      case _:
-        return None
-    findCircles(img, params, scale)
-
-
-
-import timeit
-#print(timeit.timeit("findCircles(img)"), globals=locals())
-while True:
-  ret, img = cam.read()
-  img = cv.warpPerspective(img, projectionConfig["projection"], (img.shape[1], img.shape[0]))   ###### TONY ADDED
-  findCircles(img, params, 4)
-  #findCircles(img, params, 2)   #tony 
-
-
-
-cam.release()
-sys.exit(0)
-
-
-
-x = 1500
-def setX(v):
-  global x
-  x = v
-y = 500
-def setY(v):
-  global y
-  y = v
-r = 500
-def setR(v):
-  global r
-  r = v
-
-
-def render():
-  global x, y, r
-  x = clamp(x, 256, width - 256)
-  y = clamp(y, 256, height - 256)
-  r = clamp(r, 20, 255)
-  roi = img[y-256:y+256, x-256:x+256]
-  draw = roi.copy()
-  cv.circle(draw, (256, 256), r, (0, 255, 0), 2)
-  cv.imshow(WINDOW_TITLE, draw)
-  k = cv.waitKey(1)
-  if (k >= 0):
-    k = chr(k)
-  if k == 'w':
-    y -= 1
-  elif k == 'W':
-    y -= 10
-  elif k == 'a':
-    x -= 1
-  elif k == 'A':
-    x -= 10
-  elif k == 's':
-    y += 1
-  elif k == 'S':
-    y += 10
-  elif k == 'd':
-    x += 1
-  elif k == 'D':
-    x += 10
-  elif k == ',':
-    r -= 1
-  elif k == '<':
-    r -= 10
-  elif k == '.':
-    r += 1
-  elif k == '>':
-    r += 10
-  elif k == ' ':
-    decode(hsv, r)
-    
-
-if __name__ == '__main__':
-    import timeit
-    while 1:
-        print(timeit.timeit("render()", globals=locals()))

@@ -19,6 +19,9 @@ H = config.physicalHeight * config.dpi
 
 
 camera = cv.VideoCapture(config.cameraId, cv.CAP_DSHOW)
+camera.set(cv.CAP_PROP_FRAME_WIDTH, config.width)
+camera.set(cv.CAP_PROP_FRAME_HEIGHT, config.height)
+
 
 window = "Projection Configuration"
 cv.namedWindow(window)
