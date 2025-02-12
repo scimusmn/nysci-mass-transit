@@ -5,9 +5,7 @@ from configuration import TransitConfiguration
 config = TransitConfiguration()
 config.load('config.json')
 
-camera = cv.VideoCapture(config.cameraId, cv.CAP_DSHOW)
-camera.set(cv.CAP_PROP_FRAME_WIDTH, config.width)
-camera.set(cv.CAP_PROP_FRAME_HEIGHT, config.height)
+camera = config.openCamera()
 
 window = "Circles Configuration"
 cv.namedWindow(window)

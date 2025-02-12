@@ -1,6 +1,48 @@
 import numpy as np
 import cv2 as cv
 import json
+import socket
+import time
+
+
+class Communication:
+  def __init__(self):
+    self.host = "127.0.0.1"
+    self.port = 5000
+
+  def connect(self, retryTime=0):
+    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+      self.socket.connect((self.host, self.port))
+      return True
+    except socket.error as e:
+      if retryTime > 0:
+        print(f"Connection failed: {e}. Retry in {retryTime} seconds...")
+        time.sleep(retryTime)
+        return self.connect(retryTime)
+      else:
+        print(f"Connection failed: {e}")
+        return False
+
+  def disconnect(self):
+    self.socket.close()
+
+  def sendTokens(self, tokens, retryTime=0):
+      if self.connect(retryTime):
+        jsonData = [{ "x": x, "y": y, "type": type } for x, y, type in tokens]
+        jsonString = json.dumps(jsonData)
+        print(jsonString)
+        self.socket.send(jsonString.encode())
+
+  def toDict(self):
+    return {
+      "host": self.host,
+      "port": self.port,
+    }
+
+  def fromDict(self, data):
+    self.host = data["host"]
+    self.port = data["port"]
 
 
 class HoughCircleParams:
@@ -59,6 +101,16 @@ class TransitConfiguration:
     self.dpi = 20
     self.projection = np.eye(3, 3)
     self.circleParams = HoughCircleParams()
+    self.communication = Communication()
+
+  def openCamera(self):
+    camera = cv.VideoCapture(self.cameraId, cv.CAP_DSHOW)
+    camera.set(cv.CAP_PROP_FRAME_WIDTH, self.width)
+    camera.set(cv.CAP_PROP_FRAME_HEIGHT, self.height)
+    return camera
+
+  def sendTokens(self, tokens):
+    self.communication.sendTokens(tokens)
 
   def reproject(self, img):
     W = self.physicalWidth * self.dpi
@@ -79,6 +131,7 @@ class TransitConfiguration:
       self.dpi = data["dpi"]
       self.projection = np.array(data["projection"])   
       self.circleParams.fromDict(data["circleParams"])
+      self.communication.fromDict(data["communication"])
 
 
   def save(self, filename):
@@ -92,5 +145,6 @@ class TransitConfiguration:
         "dpi": self.dpi,
         "projection": self.projection.tolist(),
         "circleParams": self.circleParams.toDict(),
+        "communication": self.communication.toDict(),
       }
       json.dump(data, file)

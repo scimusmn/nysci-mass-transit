@@ -25,8 +25,11 @@ dictionary = {
 
 
 # invert bits
-for key in dictionary:
+for k in dictionary:
+  print(dictionary[k])
+  # dictionary[k] = 0b1111111111111111111111111111111111111111111 ^ dictionary[k]
   dictionary[k] = 0b1111111111111111111111111111111111111111111 ^ dictionary[k]
+  print(dictionary[k])
   print(bin(dictionary[k]))
 
 
