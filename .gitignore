@@ -6,4 +6,7 @@ build
 CMakeSettings.json
 *.pdf
 *~
+<<<<<<< HEAD
 src/__pycache__
+=======
+>>>>>>> tony
