@@ -6,3 +6,4 @@ build
 CMakeSettings.json
 *.pdf
 *~
+src/__pycache__
