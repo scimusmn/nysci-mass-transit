@@ -9,6 +9,9 @@ camera = config.openCamera()
 
 window = "Circles Configuration"
 cv.namedWindow(window)
+_, img = camera.read()
+img = config.reproject(img)
+cv.imshow(window, img)
 
 # create trackbars
 def minDistSlider(value):
