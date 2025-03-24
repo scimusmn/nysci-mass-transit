@@ -90,40 +90,42 @@ def matchCode(x):
   return -1
 
 
+def getValues(hsv, center, radius, num):
+  tau = 2 * math.pi
+  angles = [ i * tau / num for i in range(num) ]
+  height, width, _ = hsv.shape
+  cx, cy = int(round(center[0])), int(round(center[1]))
+  values = []
+  for angle in angles:
+    x = round(cx + radius * math.cos(angle))
+    y = round(cy + radius * math.sin(angle))
+    x = clamp(int(x), 0, width-1)
+    y = clamp(int(y), 0, height-1)
+    values.append(hsv[y, x, 2])
+  return values
+
+
+def otsuVariance(values, threshold):
+  return np.nansum([
+    np.mean(mask) * np.var(values, where=mask)
+    for mask in [ values >= threshold, values < threshold ]
+  ])
+
+
+def otsuThreshold(values):
+  return min(
+    range(np.min(values)+1, np.max(values)),
+    key=lambda thresh: otsuVariance(values, thresh)
+  )
+
+
 def decode(hsv, p0, r, n=0, max_retries=32):
-    tau = 2 * math.pi
-    sample_count = 43  
-    sample_angles = [x * tau / sample_count for x in range(sample_count)]
-
-    # Convert center coordinates to integers
-    cx, cy = int(round(p0[0])), int(round(p0[1]))
-
-    # Create a copy for visualization
-    #visualization_img = hsv.copy()
-
-    sample_positions = []
-    sample_values = []
-    
-    for angle in sample_angles:   
-        # Compute sample points relative to the circle's center
-        sx = int(round(cx + r * math.cos(angle)))
-        sy = int(round(cy + r * math.sin(angle)))
-
-        # Clamp values to stay inside the image bounds
-        sx = clamp(sx, 0, hsv.shape[1] - 1)
-        sy = clamp(sy, 0, hsv.shape[0] - 1)
-
-        sample_positions.append((sx, sy))
-        sample_values.append(hsv[sy, sx, 2])  # Sample brightness (V channel)
-
-        # Draw sample points 
-        #cv.circle(visualization_img, (sx, sy), 2, (0, 255, 255), -1)  
+    values = getValues(hsv, p0, r, 43)
 
     # Compute threshold and binarize
-    min_val, max_val = min(sample_values), max(sample_values)
-    threshold = (float(max_val) + float(min_val)) / 2
+    threshold = otsuThreshold(np.array(values))
     #threshold = 128                                      ############################### gotta try   
-    binary = [1 if v > threshold else 0 for v in sample_values]
+    binary = [1 if v > threshold else 0 for v in values]
 
     # binary = [1 - b for b in binary]                   ########################  flip all bits
     
