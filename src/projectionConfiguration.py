@@ -6,7 +6,7 @@ from configuration import TransitConfiguration
 def mouseCallback(event, x, y, flags, points):
   if event == cv.EVENT_LBUTTONDOWN:
     if len(points) < 4:
-      points.append((x, y))
+      points.append((2*x, 2*y))
   elif event == cv.EVENT_RBUTTONDOWN:
     if len(points) > 0:
       points.pop()
@@ -16,7 +16,8 @@ config = TransitConfiguration()
 config.load('config.json')
 W = config.physicalWidth * config.dpi
 H = config.physicalHeight * config.dpi
-
+FONT_SIZE = round(W/1000)
+CIRCLE_RADIUS = round(W/400)
 
 camera = cv.VideoCapture(config.cameraId, cv.CAP_DSHOW)
 camera.set(cv.CAP_PROP_FRAME_WIDTH, config.width)
@@ -44,9 +45,9 @@ def gatherPoints(window, points):
 
     _, img = camera.read()
     for point in points:
-      cv.circle(img, point, 3, (255, 0, 0), -1)
-    cv.putText(img, caption, (10, 10), cv.FONT_HERSHEY_PLAIN, 1, (255, 0, 0))
-    cv.imshow(window, img)
+      cv.circle(img, point, CIRCLE_RADIUS, (0, 255, 0), -1)
+    cv.putText(img, caption, (2*FONT_SIZE, 20*FONT_SIZE), cv.FONT_HERSHEY_PLAIN, FONT_SIZE, (0, 255, 0), 4)
+    cv.imshow(window, img[::2, ::2])
     cv.waitKey(10)
 
 
@@ -56,9 +57,9 @@ def previewProjection(window, points, projection):
     img = cv.warpPerspective(img, projection, (W, H))
     cv.putText(
       img, "Press any key to finish; right click to return to point selection", 
-      (10, img.shape[0] - 10), cv.FONT_HERSHEY_PLAIN, 1, (255, 0, 0)
+      (2*FONT_SIZE, H - 20*FONT_SIZE), cv.FONT_HERSHEY_PLAIN, FONT_SIZE, (0, 255, 0), 4
     )
-    cv.imshow(window, img)
+    cv.imshow(window, img[::2, ::2])
     if cv.waitKey(10) != -1:
       return True
   return False

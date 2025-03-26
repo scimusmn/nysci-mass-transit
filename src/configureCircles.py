@@ -11,7 +11,7 @@ window = "Circles Configuration"
 cv.namedWindow(window)
 _, img = camera.read()
 img = config.reproject(img)
-cv.imshow(window, img)
+cv.imshow(window, img[::2, ::2])
 
 # create trackbars
 def minDistSlider(value):
@@ -37,8 +37,8 @@ while running:
   img = config.reproject(img)
   circles = config.findCircles(img)
   for x, y, r in circles[0,:]:
-    cv.circle(img, (x, y), r, (0, 0, 255), 2)
-  cv.imshow(window, img)
+    cv.circle(img, (x, y), r, (0, 255, 0), 2)
+  cv.imshow(window, img[::2, ::2])
   if cv.waitKey(10) != -1:
     running = False
 

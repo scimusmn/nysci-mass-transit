@@ -3,11 +3,13 @@ from configuration import TransitConfiguration
 from collections import Counter
 from decode import decode
 
-DEBUG = True
+#DEBUG = True
+DEBUG = False
 
 config = TransitConfiguration()
 config.load('config.json')
-# config.communication.connect(5)
+if not DEBUG:
+    config.communication.connect(5)
 
 
 camera = config.openCamera()
@@ -95,7 +97,7 @@ while True:
     for x, y, r in circles[0, :]:
         code = decode(hsv, (x, y), r)
         cv.circle(img, (x, y), round(0.94*r), (0, 255, 0), 2)
-        cv.putText(img, str(code), (x, y), cv.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+        cv.putText(img, str(code), (r+x, y), cv.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4)
         if code != -1:
             detected.append(MatchToken(code, x, y))
     for token in tokens:
@@ -110,9 +112,11 @@ while True:
     for token in tokens:
         pos = (round(token.pos.x), round(token.pos.y))
         cv.circle(img, pos, 40, (0, 0, 255), 2)
-        cv.putText(img, str(token.getType()), pos, cv.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2)
-    config.sendTokens([ t.tuple(width, height) for t in tokens ])
-    cv.imshow(window, img)
+        cv.putText(img, str(token.getType()), pos, cv.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
+    if not DEBUG:
+        config.sendTokens([ t.tuple(width, height) for t in tokens ])
+    else:
+        cv.imshow(window, img[::2, ::2])
     cv.waitKey(10)
 
 

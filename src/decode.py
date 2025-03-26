@@ -84,7 +84,7 @@ def matchCode(x):
     #if (minimumDistance(x, dictionary[code]) < 8):
  
     if dist < 8:                        ############  CHANGE  FOR  ACCURACY
-      print("MATCHED! ", code )
+        # print("MATCHED! ", code )
       return code
   #print("NO MATCH!")
   return -1
@@ -147,6 +147,6 @@ def decode(hsv, p0, r, n=0, max_retries=32):
     #cv.waitKey(0)
 
     if code == -1 and n < max_retries:
-        return decode(hsv, p0, r * 0.99, n + 1, max_retries)
+        return decode(hsv, p0, r * 0.98, n + 1, max_retries)
 
     return code
